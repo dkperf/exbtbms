@@ -1,5 +1,5 @@
 
-# ezbtbms JBD BMS bluetooh interface
+# ezbtbms JBD BMS bluetooth interface
 
 JDB BMS Bluetooth BLE status request.
 
