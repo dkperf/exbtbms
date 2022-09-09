@@ -1,0 +1,12 @@
+
+;  Local Pi Bluetooth address
+DEVICE = Local_Pi  TYPE=MESH  NODE=1  ADDRESS=xx:xx:xx:xx:xx:xx
+
+;  JBD BMS  Bluetooth address  AND BLE characteristics of note.
+;  These entries MUST match code: see in bms.c line with "NOTICE"
+
+DEVICE = JBD_BMS   TYPE=LE    NODE=9  ADDRESS=xx:xx:xx:xx:xx:xx
+  LECHAR = Name     PERMIT=12 SIZE=22  HANDLE=0003 UUID=2A00  ; index 0
+  LECHAR = FF01     PERMIT=12 SIZE=32  HANDLE=0011            ; index 1  
+  LECHAR = FF02     PERMIT=06 SIZE=20  HANDLE=0015            ; index 2  
+
