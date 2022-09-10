@@ -90,13 +90,6 @@
 #include "bms.h"
 
 
-/*
-   DEBUG messages. ie.  'set_print_flag(PRINT_VERBOSE)' and #define DEBUG 1;
-   Because of the way the btlib spools its debug messages, standard printf and 
-   btlib debug messages are not in order if you use '>' to redirect output on
-   command line.  :-(
-   Many things in btlib are questionabe. But... BMS bluetooth data shows up.
-*/
 
 //#define DEBUG 1
 
@@ -294,6 +287,8 @@ void get_BMS_StatusInfo()
    //  So we loop and send requests a couple of times just make sure. no harm
    //  Something to do with Bluetooth dongle going to sleep perhaps?
 
+   write_ctic(BMS_NODE,IDX_FF02,msg4,sizeof(msg4)); // Request BMS MSG 04
+
    for ( int j =0; j<2; j++)
    {
       // btlib is not an event driven system.   :-(
@@ -302,20 +297,21 @@ void get_BMS_StatusInfo()
       // read_notify(xx) with long timeout. Still VERY bad.
       // read_notify( 3000 ) will use %100 cpu for 3 seconds.
       // you can use top command to check your progam cpu usage.
-      // The usleep()s here a very generous you can shorten them.
+      // 03 and 04 msg response time seems to be 60-150 ms.
 
-      usleep(200*1000); // milli sec sleep
+      usleep(100*1000); // milli sec sleep
 
       // These BMS requests are sent as characteristic FF02 requests
       // and are returned by the BMS as FF01 characteristic info.
       write_ctic(BMS_NODE,IDX_FF02,msg3,sizeof(msg3)); // Request BMS MSG 03
 
-      usleep(150*1000); 
+      usleep(200*1000); 
       read_notify(2);   // spin and read any response for x milli sec
 
       write_ctic(BMS_NODE,IDX_FF02,msg4,sizeof(msg4)); // Request BMS MSG 04
 
-      usleep(150*1000);
+      write_ctic(BMS_NODE,IDX_FF02,msg4,sizeof(msg4)); // Request BMS MSG 04
+      usleep(200*1000);
       read_notify(2);  
 
       DBUG( printBmsInfo( &g_BmsInfo ); ) // Show info read from BMS
@@ -335,8 +331,10 @@ int main()
    if(init_blue("devices.txt") == 0)
       return(0);
 
-   set_le_wait(500);                    // LE connection completion time  ms
-   connect_node(BMS_NODE,CHANNEL_LE,0); // 3rd param 0 unused on LE devices
+   set_le_wait(150);             // LE connection completion time  ms
+
+   if (connect_node(BMS_NODE,CHANNEL_LE,0)==0)// 3rd param 0 unused on LE devices
+      return(0);
 
    // read Name from BMS  (index IDX_2A00 from devices.txt file)
    read_ctic(BMS_NODE,IDX_2A00,g_BmsInfo.name,sizeof(g_BmsInfo.name));   
