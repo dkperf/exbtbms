@@ -1,12 +1,12 @@
 
 # ezbtbms JBD BMS bluetooth interface
 
-JDB BMS Bluetooth BLE status request.
+JBD BMS Bluetooth BLE status request.
 
-This project is a sample for the Raspberry Pi which accesses a JDB BMS
+This project is a sample for the Raspberry Pi which accesses a JBD BMS
 via the Bluetooth BLE protocol and requests the basic BMS status
 information.  This project is meant to be just that, a SIMPLE sample
-of how to access the JDB BMS basic status information via Bluetooth.
+of how to access the JBD BMS basic status information via Bluetooth.
 
 This code is VERY specific to JBD BMS.  Will not work well with
 other BLE devices without modification.
@@ -81,7 +81,7 @@ Output from the execution of  'sudo ./bms'
 The few samples I have found on the WEB are either way too complicated
 or have too many dependencies.
 
-I just want to connect to my JDB BMS via Bluetooth and ask for the
+I just want to connect to my JBD BMS via Bluetooth and ask for the
 basic BMS status information.
 
 Not to mention that all the documentation ( not much ) I have found
@@ -126,6 +126,7 @@ https://github.com/petzval/btferret
 
 [Project w BMS BLE interface code using BlueZ/Gattlib](http://github.com/sshoecraft/jbdtool)
 
+[JBD BMS BLE Protocol discussion](https://endless-sphere.com/forums/viewtopic.php?t=91672)
 
 ## Project details
 
@@ -206,7 +207,7 @@ Basic Program outline:
     exit
 
 
-If you need or want verbose/debug info from program then uncomment #define DEBUG
-line in bms.c
+If you need or want verbose/debug info from the bms program then uncomment #define DEBUG
+line in bms.c and recompile.
 
 
