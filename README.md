@@ -136,7 +136,7 @@ Acknoledgements:
   btlib of course.
 
 
-The btlib.c in this project has modified from the stock btlib.c
+The btlib.c in this project has been modified from the stock btlib.c
 provided by the github :: btferret project.
 Timestamps have been added to output when DEBUG is on and DEBUG is now
 off by default.  Also a new routine setCallback() has been added.
