@@ -136,12 +136,10 @@ Acknoledgements:
   btlib of course.
 
 
-The btlib.c in this project has some minor changes from the stock btlib.c
+The btlib.c in this project has modified from the stock btlib.c
 provided by the github :: btferret project.
-If you choose for some reason to download and use the stock btlib.c then make change in init_blue() to 
-  set_print_flag(PRINT_NORMAL);
-Also paste setCallback() routine located in bms.h into btlib.c at the end of the file.
-
+Timestamps have been added to output when DEBUG is on and DEBUG is now
+off by default.  Also a new routine setCallback() has been added.
 
 btlib requires a devices.txt file:
 You must set your   local and BMS  addresses in devices.txt
