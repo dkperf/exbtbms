@@ -3,7 +3,7 @@
 
 JBD BMS Bluetooth BLE status request.
 
-This project was done on a Raspberry Pi. It's purpose is to access a
+This 'c' project was done on a Raspberry Pi. It's purpose is to access a
 JBD BMS using the Bluetooth BLE protocol and request the basic BMS
 status information.  This project is meant to be a simple example
 of how to access the JBD BMS basic information via Bluetooth.
@@ -21,7 +21,7 @@ of bluetooth functions provided in btlib.c.  Go read https://github.com/petzval/
 
 ## Installation
 
-To make this project go, download 5 files and compile.(not even a make file).
+To create the binary, download 5 files and compile.(not even a make file).
 
     btlib.c
     btlib.h
@@ -51,7 +51,7 @@ In order to find remote bluetooth BLE device addresses run:
 
 ## Usage/Output
 
-Output from the execution of  'sudo ./bms'
+Stdout output from the execution of  'sudo ./bms'
 
 
     +  bms_name:        xiaoxiang BMS
@@ -153,10 +153,9 @@ Sample btlib device file (required for this program) "devices.txt" 5 lines.
        LECHAR = FF02     PERMIT=06 SIZE=20  HANDLE=0015            ; index 2
 
 
-
   The LECHAR lines above are derived from Characteristics info of JBD BMS.
 
-      Characteristics info given by JBD BMS when asked.
+      Characteristics info given by JBD BMS when requested:
 
     Device Name            22 byte Permit 12 rn  Handle=0003 UUID=2A00
     Appearance              2 byte Permit 02 r   Handle=0005 UUID=2A01
