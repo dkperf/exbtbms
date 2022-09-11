@@ -3,15 +3,15 @@
 
 JBD BMS Bluetooth BLE status request.
 
-This project is a sample for the Raspberry Pi which accesses a JBD BMS
-via the Bluetooth BLE protocol and requests the basic BMS status
-information.  This project is meant to be just that, a SIMPLE sample
-of how to access the JBD BMS basic status information via Bluetooth.
+This project was done on a Raspberry Pi. It's purpose is to access a
+JBD BMS using the Bluetooth BLE protocol and request the basic BMS
+status information.  This project is meant to be a simple example
+of how to access the JBD BMS basic information via Bluetooth.
 
 This code is VERY specific to JBD BMS.  Will not work well with
 other BLE devices without modification.
 
-It is a simple base set to start coding your BMS project from.
+It is a simple code base to start coding your BMS project from.
 Other BMS BT status projects on the WEB do sooo.. many other
 things it is impossible to extract the basic code set from them.
 
