@@ -1,10 +1,10 @@
 /* 
   bms.c
   
-  This project is a sample for the Raspberry Pi which accesses a JDB BMS
-  via the Bluetooth BLE protocol and requests the basic BMS status 
-  information.  This project is ment to be just that, a simple sample
-  of how to access the JDB BMS basic information via Bluetooth.
+  This project was done on a Raspberry Pi. It's purpose is to access a
+  JBD BMS using the Bluetooth BLE protocol and request the basic BMS 
+  status information.  This project is meant to be a simple example
+  of how to access the JBD BMS basic information via Bluetooth.
 
   This code is VERY specific to JBD BMS.  Will not work well with
   other BLE devices without a lot of modification..
@@ -13,13 +13,26 @@
   Other BMS status projects on the WEB do sooo.. many other
   things it is impossible to extract the basic code stuff from them.
 
- 
+
+  This program uses btlib to get access to the Bluetooth BLE devive.
+
+  btlib problems:
+    Require root ( ie. 'sudo' ) to run.  Accesses HCI directly.
+    Not an event driven system so hogs CPU. Must be very careful.
+    Uses this funky devices.txt definitions file.
+
+  btlib pluses:
+    Does not use BlueZ.  Default bluetooth Stack on Pi.
+    MUCH simpler than BlueZ.
+    works! ie. gets the job done.
+
 
   sample devices.txt for a JBD device ;  
   You must set your   local and BMS  addresses
 
-  Sample btlib device file (required for this program) "devices.txt" 5 lines.
-  The BMS NODE id seems just arbitary. I selected 9.
+  Below is a sample btlib device file (required for this program) "devices.txt".
+  cut and paste the 5 lines into "devices.txt.  The NODE id for DEVICE=JBD_BMS 
+  is arbitary. I selected 9.
 
 
   DEVICE = Local_Pi TYPE=MESH  NODE=1  ADDRESS=XX:XX:XX:XX:XX:XX
@@ -29,11 +42,9 @@
     LECHAR = FF02     PERMIT=06 SIZE=20  HANDLE=0015            ; index 2  
 
 
-
-
-  The LECHAR above are derived from Characteristics info (btlib style) of JBD BMS
+  The LECHAR lines above are derived from the Characteristics info of a JBD BMS.
   
-      Characteristics info given by JBD BMS when asked.
+  Characteristics info given by JBD BMS when asked:
 
     Device Name            22 byte Permit 12 rn  Handle=0003 UUID=2A00
     Appearance              2 byte Permit 02 r   Handle=0005 UUID=2A01
@@ -43,17 +54,7 @@
     FF02 UUID              20 byte Permit 06 rw  Handle=0015 UUID=FF02
     FA01 UUID               1 byte Permit 06 rw  Handle=0019 UUID=FA01
 
-    This bms progam currently only uses 3 of the characteristics.
-
-
-  btlib problems:
-  Require root ( ie. 'sudo' ) to run.  Accesses HCI directly.
-  Not an event driven system so hogs CPU. Must be very careful.
-  Uses this funky devices.txt definitions file.
-
-  btlib pluses:
-  MUCH simpler than BlueZ.
-  works! ie. gets the job done.
+  This bms progam currently only uses 3 of these characteristics.
 
 */ 
 
@@ -100,7 +101,7 @@
 #endif
 
 
-//  Request messages for JDB BMS 
+//  Request messages for JBD BMS 
 //  See "JBD BMS protocol info.xls" for more info.
 char msg3[] = { 0xDD, 0xA5, 0x03, 0x00, 0xFF, 0xFD, 0x77 };
 char msg4[] = { 0xDD, 0xA5, 0x04, 0x00, 0xFF, 0xFC, 0x77 };
@@ -244,7 +245,8 @@ int notify_callback(int lenode,int cticn,char *buf,int nread)
    if ( *g_msg_buf != 0xDD || g_msg_buf[2]) // Unk msg?  ie. bad header
    {                                        // or ERROR set in msg 
       if ( g_msg_buf[2] )
-         printf( "%s : ERROR in received msg\n", g_BmsInfo.name );
+         printf( "%s : ERROR in received msg. header %02X Err %02X\n", 
+                g_BmsInfo.name, g_msg_buf[1] );
 
       g_buf_len = 0;       // chuck the message ; buf[2] = 0 if no ERROR
       return 0;
@@ -310,7 +312,6 @@ void get_BMS_StatusInfo()
 
       write_ctic(BMS_NODE,IDX_FF02,msg4,sizeof(msg4)); // Request BMS MSG 04
 
-      write_ctic(BMS_NODE,IDX_FF02,msg4,sizeof(msg4)); // Request BMS MSG 04
       usleep(200*1000);
       read_notify(2);  
 
