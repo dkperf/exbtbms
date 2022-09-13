@@ -90,7 +90,7 @@ are very limited.
 
 I am trying to keep this simple.  No feature creep. Creep is for you todo.
 bms.c only has couple hundred lines of actual code.  btlib.c is another story,
-but you hopefully don't have to look at btlib.c for this purpose.
+but hopefully you don't have to look at btlib.c for this purpose.
 We use just a small subset of btlib.
 For more information on btlib see the github project 'petzval/btferret'.
 https://github.com/petzval/btferret 
