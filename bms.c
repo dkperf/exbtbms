@@ -1,4 +1,11 @@
 /* 
+
+  Copyright (c) 2022, dkperf
+  All rights reserved.
+
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree.
+
   bms.c
   
   This project was done on a Raspberry Pi. It's purpose is to access a
@@ -18,6 +25,8 @@
 
   btlib problems:
     Require root ( ie. 'sudo' ) to run.  Accesses HCI directly.
+    'sudo' can be bypassed with the following on the binary:
+      "sudo setcap 'cap_net_raw,cap_net_admin+eip' bms"
     Not an event driven system so hogs CPU. Must be very careful.
     Uses this funky devices.txt definitions file.
 
@@ -84,6 +93,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <signal.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -91,6 +101,9 @@
 #include "bms.h"
 
 
+//  If JSON output desired.
+//
+//#define JSON_OUT 1
 
 //#define DEBUG 1
 
@@ -100,6 +113,7 @@
     #define DBUG( block )
 #endif
 
+int g_AppExit = 0;
 
 //  Request messages for JBD BMS 
 //  See "JBD BMS protocol info.xls" for more info.
@@ -109,11 +123,60 @@ char msg4[] = { 0xDD, 0xA5, 0x04, 0x00, 0xFF, 0xFC, 0x77 };
 bms_info_t g_BmsInfo = {};   // Bms Info and zero to start
 
 
+
+//------------------------------------------------------------------
+//  print to buffer s  t:cnt, t2:[x1,x2,...],
+//------------------------------------------------------------------
+char *jsonArray( char *s, char *t2, int cnt, const float *a, int max )
+{
+//   s+= sprintf( s, "    %-13s : %d,\n", t,  cnt );
+   s+= sprintf( s, "    %-13s : [ ",    t2 );
+
+   for(int i=0; i < cnt; i++) 
+      s+= sprintf( s, " %.*f,", max, a[i] );
+
+   return( s+ sprintf( --s, " ],\n" ));  //--s is  nuke trailing ','
+}
+
+//------------------------------------------------------------------
+//  output the information in the BMS info structure as JSON
+//------------------------------------------------------------------
+static char *jsonBmsInfo ( const bms_info_t *bp, char *buf )
+{
+   register char *s = buf;
+
+   s+= sprintf( s, "  \"bms\": {\n" );
+   s+= sprintf( s, "    %-13s : \"%s\",\n", "\"name\"",     bp->name );
+   s+= sprintf( s, "    %-13s : %.2f,\n",   "\"voltage\"",  bp->voltage );
+   s+= sprintf( s, "    %-13s : %.2f,\n",   "\"current\"",  bp->current );
+   s+= sprintf( s, "    %-13s : %.2f,\n",   "\"capacity\"", bp->capacity );
+   s+= sprintf( s, "    %-13s : %.2f,\n",   "\"balance\"",  bp->balance );
+   s+= sprintf( s, "    %-13s : %d,\n",     "\"percent\"",  (int)bp->stateOfCharge );
+   s+= sprintf( s, "    %-13s : %d,\n",     "\"fetbits\"",  bp->fetbits );
+   s+= sprintf( s, "    %-13s : %d,\n",     "\"balancebits\"", bp->balancebits );
+
+   s = jsonArray( s, "\"cellvolts\"", bp->cells,  bp->cellvolt, 3 );
+   s = jsonArray( s, "\"temps\"",     bp->ntemps, bp->temps,    2 );
+   
+   s-=2;                             // nuke trailing ',\n'
+   sprintf( s, "\n  }\n" );
+
+   return buf;
+}
+
 //------------------------------------------------------------------
 //  output the information in the BMS info structure.
 //------------------------------------------------------------------
 void printBmsInfo ( bms_info_t *bp )
 {
+#ifdef JSON_OUT
+
+   char json[600];
+   jsonBmsInfo ( bp, json );
+   printf( "{\n%s}\n", json );
+
+#else
+
    printf( "%-19s %s\n",   "+  bms_name:",  bp->name);
    printf( "%-19s %.2f\n", "+  voltage:",   bp->voltage);
    printf( "%-19s %.2f\n", "+  current:",   bp->current);
@@ -154,6 +217,9 @@ void printBmsInfo ( bms_info_t *bp )
       bits[i] = 0;
       printf("%-19s %s\n", "+  balancebits:", bits);
    }
+
+
+#endif
 }
 
 
@@ -233,7 +299,7 @@ char *strToHex( char *buf, int len )
 //------------------------------------------------------------------
 int notify_callback(int lenode,int cticn,char *buf,int nread)
 { 
-   static char g_msg_buf[200]; // not the best, but for simplicity...
+   static unsigned char g_msg_buf[200]; // not the best, but for simplicity...
    static int  g_buf_len =0;
 
    DBUG( printf( "%s has rec'd %s\n",device_name(lenode),ctic_name(lenode,cticn));)
@@ -246,7 +312,7 @@ int notify_callback(int lenode,int cticn,char *buf,int nread)
    {                                        // or ERROR set in msg 
       if ( g_msg_buf[2] )
          printf( "%s : ERROR in received msg. header %02X Err %02X\n", 
-                g_BmsInfo.name, g_msg_buf[1] );
+                g_BmsInfo.name, g_msg_buf[1], g_msg_buf[2] );
 
       g_buf_len = 0;       // chuck the message ; buf[2] = 0 if no ERROR
       return 0;
@@ -320,6 +386,18 @@ void get_BMS_StatusInfo()
    }
 }
 
+   
+//------------------------------------------------------------------
+//   Handle SIG INT from terminal
+//------------------------------------------------------------------
+void sig_handler(int signo)
+{
+  if (signo == SIGINT)
+  {
+      printf("received SIGINT\n");
+      g_AppExit++;
+  }
+}
 
 
 //------------------------------------------------------------------
@@ -328,6 +406,8 @@ void get_BMS_StatusInfo()
 int main()
 {
    DBUG( set_print_flag(PRINT_VERBOSE); )
+
+   signal(SIGINT, sig_handler);
 
    if(init_blue("devices.txt") == 0)
       return(0);
