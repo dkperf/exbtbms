@@ -116,9 +116,8 @@ https://github.com/petzval/btferret
 
     Using  btlib  problems:
       Requires root ( ie. 'sudo' ) capabilities for network_raw. 
-      Accesses HCI directly.
+      Accesses HCI directly. See 'info on raw sockets' below.
         Hence the "sudo setcap 'cap_net_raw,cap_net_admin+eip' bms"
-        More info on raw sockets: [Linux Raw sockets](https://squidarth.com/networking/systems/rc/2018/05/28/using-raw-sockets.html)
        
       Not an event driven system so hogs CPU. Must be very careful.
       Uses this funky devices.txt definitions file.
@@ -129,7 +128,8 @@ https://github.com/petzval/btferret
       Does not use or need BlueZ ( default Pi bluetooth stack )
       MUCH simpler than BlueZ and others.
       works! ie. gets the job done.
-
+      
+More info on raw sockets: [Linux Raw sockets](https://squidarth.com/networking/systems/rc/2018/05/28/using-raw-sockets.html)
 
 ## Acknowledgements
 
