@@ -1140,19 +1140,17 @@ char *adlist[48] = {
 
 void timestamp() 
 {
-  char buffer[26];
   int millisec;
   struct tm* tm_info;
   struct timeval tv;
+  char buffer[26];
 
   gettimeofday(&tv, NULL);
 
   tm_info = localtime(&tv.tv_sec);
 
   strftime(buffer, 26, "%H:%M:%S", tm_info);
-  printf("%s.", buffer);
-  sprintf(buffer, "%06ld ", tv.tv_usec );
-  printf("%3.3s ", buffer);
+  printf("%s.%03ld ", buffer, (tv.tv_usec/1000));
 }
 
 int init_blue(char *filename)
@@ -1321,6 +1319,8 @@ int init_blue_ex(char *filename,int hcin)
    }
 
 
+   // handle devices .txt file
+   
    stream = fopen(filename,"r");
    if(stream == NULL)
    {
@@ -1355,10 +1355,8 @@ int init_blue_ex(char *filename,int hcin)
       ind[12] = 0x80000000;  // terminate flag
 
       if(ind[4] != 0)
-         //dk      printf( "  %s\n",s);
          DBUG( printf( "  %s\n",s);)
       else  
-         //dk      printf( "%s\n",s);
          DBUG( printf( "%s\n",s);)
 
       //flushprint();
@@ -4814,6 +4812,7 @@ int readhci(int ndevice,long long int mustflag,long long int lookflag,int timout
                do
                {
                   len = read(gpar.hci,buf,sizeof(buf));
+//DBUG( printf( "1 read from HCI socket... %d \n", len);) 
 
                   if(len > 0)  // restart timeout - still toshort
                   {
@@ -4842,6 +4841,7 @@ int readhci(int ndevice,long long int mustflag,long long int lookflag,int timout
             do       // read block of data - may be less than or more than one line
             {
                len = read(gpar.hci,&buf[blen],sizeof(buf)-blen);                  
+//DBUG( printf( "3 read from HCI socket... %d \n", len);) 
 
                // len = number of bytes read  0=EOF -1=error     
 
@@ -9721,6 +9721,13 @@ int set_reply_wait(int waitms)
       gpar.timout = waitms;   // reply wait ms time out
    return(gpar.timout); 
 }
+int set_reply_waitShort(int waitms)
+{
+   if(waitms >= 0)
+      gpar.toshort = waitms;   // reply wait ms time out
+   return(gpar.toshort); 
+}
+
 int set_le_wait(int waitms)
 {
    if(waitms >= 0)

@@ -132,6 +132,8 @@ void register_serial(char *uuid,char *name);
 void scroll_back(void);
 void scroll_forward(void);
 int set_le_wait(int waitms);
+int set_reply_wait(int waitms);
+int set_reply_waitShort(int waitms);
 int set_print_flag(int flag);
 char *strtohex(char *s,int *num);
 
