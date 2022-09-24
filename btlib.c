@@ -1243,7 +1243,7 @@ int init_blue_ex(char *filename,int hcin)
    if(hcisock() == 0)    
    {   
       printf( "** ERROR ** Must run with root permission via sudo as follows:\n"); 
-      printf( "sudo ./btferret\n");
+      printf( "sudo ./program\n");
       //flushprint();
       return(0);
    }
