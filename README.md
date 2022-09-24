@@ -13,7 +13,7 @@ other BLE devices without modification.
 
 It is a simple code base to start coding your BMS project from.
 Other BMS BT status projects on the WEB do sooo.. many other
-things it is impossible to extract the basic code set from them.
+things it is difficult to extract the basic code set from them.
 
 This project is written all in 'c' using the btlib code provided in the
 github petzval/btferret project.  The btferret project has a library
