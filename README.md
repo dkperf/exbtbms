@@ -34,7 +34,9 @@ To create the binary, download 5 files and compile.(not even a make file).
     edit devices.txt      add bluetooth address of your BMS and local host.
                           See BT ADDRESSes  below if you don't have them.
 
-    sudo ./bms
+    sudo setcap 'cap_net_raw,cap_net_admin+eip' bms
+
+    ./bms
 
 
 Thats it.  No other dependencies.
@@ -51,7 +53,7 @@ In order to find remote bluetooth BLE device addresses run:
 
 ## Usage/Output
 
-Stdout output from the execution of  'sudo ./bms'
+Stdout output from the execution of  './bms'
 
 
     +  bms_name:        xiaoxiang BMS
@@ -74,7 +76,23 @@ Stdout output from the execution of  'sudo ./bms'
     +  balancebits:     0000000000000000
 
 
+Or if bms.c compliled with #define JSON_OUT 1
+then Stdout output from the execution of  './bms' is :
 
+    {
+      "bms": {
+        "name"        : "xiaoxiang BMS",
+        "voltage"     : 13.33,
+        "current"     : 0.00,
+        "capacity"    : 260.00,
+        "balance"     : 207.84,
+        "percent"     : 80,
+        "fetbits"     : 3,
+        "balancebits" : 0,
+        "cellvolts"   : [  0.000, 0.000, 0.000, 0.000 ],
+        "temps"       : [  22.80, 23.30, 23.00 ]
+      }
+    }
 
 
 ## More Information
@@ -97,7 +115,10 @@ https://github.com/petzval/btferret
 
 
     Using  btlib  problems:
-      Requires root ( ie. 'sudo' ) to run.  Accesses HCI directly.
+      Requires root ( ie. 'sudo' ) to capabilities for network_raw. 
+      Accesses HCI directly.
+        Hence the "sudo setcap 'cap_net_raw,cap_net_admin+eip' bms"
+       
       Not an event driven system so hogs CPU. Must be very careful.
       Uses this funky devices.txt definitions file.
       Takes over local pi bluetooth device HCI ; no other BT devices can be connected.
