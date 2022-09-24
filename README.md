@@ -115,7 +115,7 @@ https://github.com/petzval/btferret
 
 
     Using  btlib  problems:
-      Requires root ( ie. 'sudo' ) to capabilities for network_raw. 
+      Requires root ( ie. 'sudo' ) capabilities for network_raw. 
       Accesses HCI directly.
         Hence the "sudo setcap 'cap_net_raw,cap_net_admin+eip' bms"
        
