@@ -82,7 +82,7 @@ then Stdout output from the execution of  './bms' is :
     {
       "bms": {
         "name"        : "xiaoxiang BMS",
-        "voltage"     : 13.33,
+        "voltage"     : 13.28,
         "current"     : 0.00,
         "capacity"    : 260.00,
         "balance"     : 207.84,
