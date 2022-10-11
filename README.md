@@ -89,7 +89,7 @@ then Stdout output from the execution of  './bms' is :
         "percent"     : 80,
         "fetbits"     : 3,
         "balancebits" : 0,
-        "cellvolts"   : [  0.000, 0.000, 0.000, 0.000 ],
+        "cellvolts"   : [  3.323, 3.321, 3.322, 3.321 ],
         "temps"       : [  22.80, 23.30, 23.00 ]
       }
     }
